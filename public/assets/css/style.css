@@ -1,0 +1,116 @@
+/*
+ *	TABLE CONTENTS
+ *	-------------------------------
+ *                
+ *           - HOME SECTION
+ *           - ABOUT SECTION
+ *           - SERVICES SECTION
+ *           - PORTFOLIO SECTION
+ *           - PORTFOLIO-SINGLE-V2 SECTION
+ *           - BLOG SECTION
+ *           - BLOG-POST SECTION
+ *           - CONTACT SECTION
+ *
+ *	------------------------------- 
+*/
+
+/* HOME SECTION */
+
+.intro-text {
+	letter-spacing: 4px;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.intro-text .weight300 {
+	font-weight: 300;
+}
+
+.block {
+	display: block;
+}
+
+
+/* ABOUT SECTION */
+
+/* SERVICES SECTION */
+
+.bg-img-services {
+	background: url('../img/bg/services-bg1.jpg') 100% fixed no-repeat;
+	position: relative;
+}
+
+.shadow {
+	height: 80%;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	background: url("../img/shadow1.png") no-repeat scroll center top;
+	background-size: 100%;
+}
+
+.bg-opacity {
+	background: rgba(255, 255, 255, .9);
+}
+
+.padding30 {
+	padding: 30px;
+}
+
+.services-img01 {
+	position: absolute;
+	z-index: 2;
+	bottom: -90px;
+	right: 0px;
+}
+
+/* PORTFOLIO SECTION */
+
+/* BLOG SECTION */
+
+/* CONTACT SECTION  */
+
+.contact-details {
+	background: url(../img/bg/map_bg.png) left 0px no-repeat;
+}
+
+.contact-form .form-style .form-loader {
+	margin-right: 8px;
+	display: none;
+}
+
+.contact-form .form-style .alert {
+	color: #ff1919;
+	background: none;
+	font-size: 12px;
+	letter-spacing: 0;
+	border-radius: 0;
+	border: 0;
+	padding: 4px 2px;
+	font-size: 14px;
+	-webkit-transition: all 0.8s;
+	-moz-transition: all 0.8s;
+	-o-transition: all 0.8s;
+	transition: all 0.8s;
+}
+
+.contact-form .form-style .alert-validate-form {
+	display: none;
+}
+
+.contact-form .form-style .alert-validate-form .alert.error {
+	display: block;
+	background: #fd4040;
+	color: #fff;
+	font-size: 14px;
+	padding: 15px 20px;
+	border: 0;
+	font-weight: 400;
+}
+
+.contact-form .form-style .alert-validate-form .alert.success {
+	background: #119400;
+	color: #fff;
+	font-weight: 400;
+	padding: 15px 20px;
+}
