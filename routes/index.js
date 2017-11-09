@@ -1,10 +1,31 @@
 var express = require('express');
 var router = express.Router();
 
+// Importing the user model
+var User = require('../models/user');
+var Book = require('../models/books');
+
+
 /* GET home page. */
-router.get('/', ensureAuthenticated, function(req, res, next) {
+router.get('/', function(req, res, next) {
   // res.render('index', { title: 'Express' });
-  res.render('index.hbs');
+
+  	Book.getAllBooks((err, books) => {
+		if(err) throw err;
+		var booksFromDB = JSON.stringify(books, undefined, 3);
+		console.log(booksFromDB);
+	});
+
+
+  	if(req.session.username){
+	  	res.render('index.hbs', {
+	  	userName: req.session.name
+	  	}
+	  );
+	}
+	else{
+		res.redirect('/login-register');
+	}
 });
 
 function ensureAuthenticated(req, res, next){

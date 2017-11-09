@@ -174,6 +174,10 @@
 		});
 
 
+		$("#foot").click(function () {
+			$("#myprofile").addClass('active');
+			document.getElementsByClassName("active")[0].className = "";
+		});
 
 
 	}); // end document ready

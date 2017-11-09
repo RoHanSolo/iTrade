@@ -16,7 +16,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet" type="text/css">
 	<!-- Styles -->
 	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/assets/pe	-icon-7-stroke/css/pe-icon-7.css">
+	<link rel="stylesheet" href="/assets/pe-icon-7-stroke/css/pe-icon-7.css">
 	<link rel="stylesheet" href="/assets/font-awesome-4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/assets/css/animate.min.css">
 	<link rel="stylesheet" href="/assets/css/animations.css">
@@ -30,9 +30,20 @@
 </head>
 
 <body class="full">
+	
+	<!-- PRELOADER -->
+	<div class="preloader">
+		<div class="spinner">
+			<div class="dot1"></div>
+			<div class="dot2"></div>
+		</div>
+	</div>
+	<!-- end: PRELOADER  -->
+	
 	{{#if success}}
 		<div class ="alert alert-danger">{{success}}</div>
 	{{/if}}
+
 
 	<div class="global-wrap">
 		<div class="full-page">
@@ -56,11 +67,11 @@
 									<form method = 'post' action="/users/login">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Email id</label>
-											<input class="form-control" placeholder="e.g. you@hosting.com" type="text" name="username"/>
+											<input class="form-control" placeholder="e.g. you@hosting.com" type="text" name="username" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control" type="password" placeholder="your password" name="password"/>
+											<input class="form-control" type="password" placeholder="your password" name="password" />
 										</div>
 										<input class="btn btn-primary" name="loginButton" type="submit" value="Sign in" />
 									</form>
@@ -70,15 +81,15 @@
 									<form method = 'post' action="/users/register">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Full Name</label>
-											<input class="form-control" name="name" placeholder="e.g. Bruce Wayne" type="text" required="true" />
+											<input class="form-control" name="name" placeholder="e.g. Bruce Wayne" type="text" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-envelope input-icon input-icon-show"></i>
 											<label>Email</label>
-											<input class="form-control" name="email" placeholder="e.g. you@hosting.com" type="text" required="true" />
+											<input class="form-control" name="email" placeholder="e.g. you@hosting.com" type="text" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control" name="password" type="password" placeholder="your password" required="true" />
+											<input class="form-control" name="password" type="password" placeholder="your password" />
 										</div>
 										<input class="btn btn-primary" type="submit" name="registerSubmit" value="Sign up for Trader" />
 									</form>

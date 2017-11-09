@@ -4,9 +4,11 @@ var multer = require('multer');
 var upload = multer({dest: './uploads'});
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var getFormData = require('get-form-data');
 
 // Importing the user model
 var User = require('../models/user');
+var Book = require('../models/books');
 
 
 /* GET users listing. */
@@ -20,12 +22,13 @@ router.get('/login-register', (req, res, next) => {
 	});
 });
 
+var sess;
 router.post('/register', (req, res, next) => {
 	// We can get data using (req.body.[anyfield](eg. req.body.email) but cannot handle file uploads, for that we use multer
 	var name = req.body.name;
 	var username = req.body.email;
 	var password = req.body.password;
-
+	
 	console.log(name, username);
 
 	var newUser = new User({
@@ -46,12 +49,14 @@ router.post('/register', (req, res, next) => {
 	// res.redirect('/login-register');
 
 	res.render('login-register.hbs', {
-		success: 'You are now registered and can login' 
+		loginSuccessful: 'You are now registered and can login' 
 	});
 });
 
 
 router.get('/logout', (req, res) => {
+	//emptying the session variable if user clicks logout
+	req.session.username = "";
 	req.logout();
 	res.render('login-register.hbs', {
 		success : 'Successful logout. Have a nice day!'
@@ -66,7 +71,18 @@ router.get('/login', (req, res, next) => {
 router.post('/login',
 	passport.authenticate('local', {failureRedirect:'/users/login-register'}),
 	function(req, res) {
-		res.render('index.hbs');
+		req.session.username = req.body.username;
+
+		User.getUserByUsername(req.body.username, (err, user) => {
+		if(err) throw err;
+
+		req.session.name = user.name;
+
+		res.redirect('/');
+		// res.render('index.hbs', {
+		// 	userName: user.name
+		// 	});
+		});
 	});
 	// (req, res) => {
 	// 	// req.flash('success', 'You are now logged in');
@@ -103,7 +119,7 @@ passport.use(new LocalStrategy(function(username, password, done){
 				if(isMatch){
 					return done(null, user);
 				}else{
-					return done(null, flase, {message: 'Invalid Password'});
+					return done(null, false, {message: 'Invalid Password'});
 				}
 
 		});
@@ -111,20 +127,135 @@ passport.use(new LocalStrategy(function(username, password, done){
 }));
 
 
-
-
 // bookImage is the name of the option in form while giving it a type file
-router.post('/upload-book', upload.single('bookImage'), (req, res, next) =>{
-	// to get the image do (req.file)
+router.post('/upload-book', (req, res, next) =>{
+	// We can get data using (req.body.[anyfield](eg. req.body.email) but cannot handle file uploads, for that we use multer
 
-	if(req.file){
-		console.log('Uploading Book Image..');
-		var bookImage = req.file.filename;
-	}
-	else{
-		console.log('No image file uploaded...')
-		var bookImage = 'noImage.jpg';
-	}
+	// console.log(bookname);
+	// console.log(req.session.username);
+	
+	User.getUserByUsername(req.session.username, (err, user) => {
+		if(err) throw err;
+		// console.log(user.name);
+		var genre = ['all'];
+		var bookname = req.body.bookname;
+		var ownerEmail = req.session.username;
+		req.session.name = user.name;
+		var ownerName = user.name;
+
+		if(req.body.art){
+			genre.push('art');
+		}
+		
+		if(req.body.biography){
+			genre.push('biography');
+		}
+		
+		if(req.body.business){
+			genre.push('business');
+		}
+
+		if(req.body.comics){
+			genre.push('comics');
+		}
+
+		if(req.body.educational){
+			genre.push('educational');
+		}
+		if(req.body.fiction){
+			genre.push('fiction');
+		}
+
+		if(req.body.journals){
+			genre.push('journals');
+		}
+
+		if(req.body.philosophical){
+			genre.push('philosophical');
+		}
+
+		if(req.body.poetry){
+			genre.push('poetry');
+		}
+
+		if(req.body.religious){
+			genre.push('religious');
+		}
+
+		if(req.body.satire){
+			genre.push('satire');
+		}
+
+		if(req.body.selfhelp){
+			genre.push('selfhelp');
+		}
+
+		if(req.body.sports){
+			genre.push('sports');
+		}
+
+		if(req.body.travel){
+			genre.push('travel');
+		}
+
+
+		var thumbnail = req.body.thumburl;
+
+
+		var newBook = new Book({
+			bookname: bookname,
+			ownerName: ownerName,
+			ownerEmail: ownerEmail,
+			genre: genre,
+			thumbnail: thumbnail
+		});
+
+		Book.addBook(newBook, (err, book) => {
+			if(err) throw err;
+			console.log(book);
+		});
+		// var getFieldData = getFormData.getNamedFormElementData;
+
+		// var form = document.querySelector('#booksForm');
+
+		// var genreList = getFieldData(form, 'genreChk');
+
+		// console.log(genreList);
+
+		// console.log("String Format");
+		// console.log(JSON.stringify(genreList));
+		console.log('genre');
+		console.log(genre);
+	});
+	
+
+	// console.log(user);
+	// var password = req.body.password;
+
+
+	// console.log(name, username);
+
+	// var newUser = new User({
+	// 	name: name,
+	// 	username: username,
+	// 	password: password
+	// });
+
+	// User.createUser(newUser, (err, user) => {
+	// 	if(err) throw err;
+	// 	console.log(user);
+	// });
+
+
+	// req.flash('success', 'You are now registered and can login');
+	// req.session['success'] = 'You are now registered and can login';
+	// res.location('/login-register');
+	// res.redirect('/login-register');
+
+	res.redirect('/');
+	// , {
+	// 	success: 'Book Successfully Added' 
+	// });
 });
 
 module.exports = router;

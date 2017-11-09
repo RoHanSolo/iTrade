@@ -18,6 +18,15 @@ var UserSchema = mongoose.Schema({
 	},
 	password: {
 		type: String
+	},
+	city: {
+		type: String
+	},
+	state: {
+		type: String
+	},
+	requestedBooks: {
+		type: [String]
 	}
 });
 

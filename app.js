@@ -15,6 +15,7 @@ var flash = require('connect-flash');
 var bcrypt = require('bcryptjs');
 var mongoDB = require('mongodb');
 var mongoose = require('mongoose');
+var getFormData = require('get-form-data');
 
 var db = mongoose.connection;
 
@@ -45,11 +46,13 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(session({
-// 	secret: 'secretKey'
-// }));
+app.use(session({
+	secret: 'secretKey',
+	resave: true,
+	saveUninitialized: true,
+}));
 
-// var sess;
+var sess;
 // app.get('/', function(req, res){
 // 	sess = req.session;
 // 	sess.username;
@@ -63,6 +66,8 @@ app.get("*", function(req, res, next) {
 
 app.use('/', index);
 app.use('/users', users);
+
+app.post('/book-uploaded')
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
