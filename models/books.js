@@ -17,7 +17,7 @@ var BookSchema = mongoose.Schema({
 	},
 	ownerEmail: {
 		type: String,
-		index: true;
+		index: true
 	},
 	genre: {
 		type: [String]
@@ -34,7 +34,9 @@ var BookSchema = mongoose.Schema({
 var book = module.exports = mongoose.model('book', BookSchema);
 
 module.exports.getBookByName = (bookname, callback) => {
-	var query = {bookname: bookname};
+	var query = {
+		bookname: bookname
+	};
 	book.findOne(query, callback);
 }
 
@@ -42,6 +44,27 @@ module.exports.getAllBooks = (callback) => {
 	book.find({}, callback);
 }
 
-module.exports.addBook = function(newBook, callback) {
+module.exports.addBook = function (newBook, callback) {
 	newBook.save(callback);
 }
+
+module.exports.getOtherBooks = (username, callback) => {
+	book.find({
+		ownerEmail: {
+			$ne: username
+		}
+	}, callback);
+}
+
+
+module.exports.getMyBooks = (username, callback) => {
+	book.find({
+		ownerEmail: {
+			$eq: username
+		}
+	}, callback);
+}
+
+//module.export.getBooksById = (ids, callback) => {
+		//	book.find
+		//}

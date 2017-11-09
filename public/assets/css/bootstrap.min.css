@@ -5535,7 +5535,6 @@ a.thumbnail.active {
 
 .alert-dismissable .close,
 .alert-dismissible .close {
-	position: relative;
 	top: -2px;
 	right: -21px;
 	color: inherit
@@ -6398,7 +6397,7 @@ a.list-group-item-danger.active:focus {
 
 .close {
 	float: right;
-	font-size: 21px;
+	font-size: 25px;
 	font-weight: 700;
 	line-height: 1;
 	color: #000;

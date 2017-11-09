@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
-var upload = multer({dest: './uploads'});
+var upload = multer({
+	dest: './uploads'
+});
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var getFormData = require('get-form-data');
@@ -12,13 +14,13 @@ var Book = require('../models/books');
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', function (req, res, next) {
+	res.send('respond with a resource');
 });
 
 router.get('/login-register', (req, res, next) => {
 	res.render('login-register.hbs', {
-		success: 'Invalid Username or Password'
+		invalid: 'Invalid Username or Password'
 	});
 });
 
@@ -28,29 +30,38 @@ router.post('/register', (req, res, next) => {
 	var name = req.body.name;
 	var username = req.body.email;
 	var password = req.body.password;
-	
-	console.log(name, username);
 
-	var newUser = new User({
-		name: name,
-		username: username,
-		password: password
-	});
+	if (name && username && password) {
 
-	User.createUser(newUser, (err, user) => {
-		if(err) throw err;
-		console.log(user);
-	});
+		console.log(name, username);
+
+		var newUser = new User({
+			name: name,
+			username: username,
+			password: password
+		});
+
+		User.createUser(newUser, (err, user) => {
+			if (err) throw err;
+			console.log(user);
+		});
 
 
-	// req.flash('success', 'You are now registered and can login');
-	// req.session['success'] = 'You are now registered and can login';
-	res.location('/login-register');
-	// res.redirect('/login-register');
+		// req.flash('success', 'You are now registered and can login');
+		// req.session['success'] = 'You are now registered and can login';
+		res.location('/login-register');
+		// res.redirect('/login-register');
 
-	res.render('login-register.hbs', {
-		loginSuccessful: 'You are now registered and can login' 
-	});
+		res.render('login-register.hbs', {
+			success: 'You are now registered and can login'
+		});
+
+	} else {
+		res.location('/login-register');
+		res.render('login-register.hbs', {
+			invalid: 'Invalid registration details'
+		});
+	}
 });
 
 
@@ -59,7 +70,7 @@ router.get('/logout', (req, res) => {
 	req.session.username = "";
 	req.logout();
 	res.render('login-register.hbs', {
-		success : 'Successful logout. Have a nice day!'
+		success: 'Successful logout. Have a nice day!'
 	})
 })
 
@@ -69,25 +80,27 @@ router.get('/login', (req, res, next) => {
 });
 
 router.post('/login',
-	passport.authenticate('local', {failureRedirect:'/users/login-register'}),
-	function(req, res) {
+	passport.authenticate('local', {
+		failureRedirect: '/users/login-register'
+	}),
+	function (req, res) {
 		req.session.username = req.body.username;
 
 		User.getUserByUsername(req.body.username, (err, user) => {
-		if(err) throw err;
+			if (err) throw err;
 
-		req.session.name = user.name;
+			req.session.user = user;
 
-		res.redirect('/');
-		// res.render('index.hbs', {
-		// 	userName: user.name
-		// 	});
+			res.redirect('/');
+			// res.render('index.hbs', {
+			// 	userName: user.name
+			// 	});
 		});
 	});
-	// (req, res) => {
-	// 	// req.flash('success', 'You are now logged in');
-	// 	// res.redirect('/');
-	// 	req.render('index.hbs');
+// (req, res) => {
+// 	// req.flash('success', 'You are now logged in');
+// 	// res.redirect('/');
+// 	req.render('index.hbs');
 // });
 
 
@@ -95,32 +108,36 @@ passport.serializeUser((user, done) => {
 	done(null, user.id);
 });
 
-passport.deserializeUser((id,done) => {
+passport.deserializeUser((id, done) => {
 	User.getUserById(id, (err, user) => {
 		done(err, user);
 	});
 });
 
 
-passport.use(new LocalStrategy(function(username, password, done){
-		console.log(username);
-		
-		// console.log(User.findOne({email:username}));
-		// console.log(User.findOne({username:username}));
+passport.use(new LocalStrategy(function (username, password, done) {
+	console.log(username);
 
-		User.getUserByUsername(username, function(err, user){
-			if(err) throw err;
-			if(!user){
-				return done(null, false, {message: 'Unknown User'});
+	// console.log(User.findOne({email:username}));
+	// console.log(User.findOne({username:username}));
+
+	User.getUserByUsername(username, function (err, user) {
+		if (err) throw err;
+		if (!user) {
+			return done(null, false, {
+				message: 'Unknown User'
+			});
+		}
+
+		User.comparePassword(password, user.password, function (err, isMatch) {
+			if (err) return done(err);
+			if (isMatch) {
+				return done(null, user);
+			} else {
+				return done(null, false, {
+					message: 'Invalid Password'
+				});
 			}
-
-			User.comparePassword(password, user.password, function(err, isMatch){
-				if(err) return done(err);
-				if(isMatch){
-					return done(null, user);
-				}else{
-					return done(null, false, {message: 'Invalid Password'});
-				}
 
 		});
 	});
@@ -128,14 +145,14 @@ passport.use(new LocalStrategy(function(username, password, done){
 
 
 // bookImage is the name of the option in form while giving it a type file
-router.post('/upload-book', (req, res, next) =>{
+router.post('/upload-book', (req, res, next) => {
 	// We can get data using (req.body.[anyfield](eg. req.body.email) but cannot handle file uploads, for that we use multer
 
 	// console.log(bookname);
 	// console.log(req.session.username);
-	
+
 	User.getUserByUsername(req.session.username, (err, user) => {
-		if(err) throw err;
+		if (err) throw err;
 		// console.log(user.name);
 		var genre = ['all'];
 		var bookname = req.body.bookname;
@@ -143,58 +160,58 @@ router.post('/upload-book', (req, res, next) =>{
 		req.session.name = user.name;
 		var ownerName = user.name;
 
-		if(req.body.art){
+		if (req.body.art) {
 			genre.push('art');
 		}
-		
-		if(req.body.biography){
+
+		if (req.body.biography) {
 			genre.push('biography');
 		}
-		
-		if(req.body.business){
+
+		if (req.body.business) {
 			genre.push('business');
 		}
 
-		if(req.body.comics){
+		if (req.body.comics) {
 			genre.push('comics');
 		}
 
-		if(req.body.educational){
+		if (req.body.educational) {
 			genre.push('educational');
 		}
-		if(req.body.fiction){
+		if (req.body.fiction) {
 			genre.push('fiction');
 		}
 
-		if(req.body.journals){
+		if (req.body.journals) {
 			genre.push('journals');
 		}
 
-		if(req.body.philosophical){
+		if (req.body.philosophical) {
 			genre.push('philosophical');
 		}
 
-		if(req.body.poetry){
+		if (req.body.poetry) {
 			genre.push('poetry');
 		}
 
-		if(req.body.religious){
+		if (req.body.religious) {
 			genre.push('religious');
 		}
 
-		if(req.body.satire){
+		if (req.body.satire) {
 			genre.push('satire');
 		}
 
-		if(req.body.selfhelp){
+		if (req.body.selfhelp) {
 			genre.push('selfhelp');
 		}
 
-		if(req.body.sports){
+		if (req.body.sports) {
 			genre.push('sports');
 		}
 
-		if(req.body.travel){
+		if (req.body.travel) {
 			genre.push('travel');
 		}
 
@@ -211,7 +228,7 @@ router.post('/upload-book', (req, res, next) =>{
 		});
 
 		Book.addBook(newBook, (err, book) => {
-			if(err) throw err;
+			if (err) throw err;
 			console.log(book);
 		});
 		// var getFieldData = getFormData.getNamedFormElementData;
@@ -227,7 +244,7 @@ router.post('/upload-book', (req, res, next) =>{
 		console.log('genre');
 		console.log(genre);
 	});
-	
+
 
 	// console.log(user);
 	// var password = req.body.password;

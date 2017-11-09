@@ -7,32 +7,45 @@ var Book = require('../models/books');
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  // res.render('index', { title: 'Express' });
-
-  	Book.getAllBooks((err, books) => {
-		if(err) throw err;
-		var booksFromDB = JSON.stringify(books, undefined, 3);
-		console.log(booksFromDB);
-	});
+router.get('/', function (req, res, next) {
+	// res.render('index', { title: 'Express' });
 
 
-  	if(req.session.username){
-	  	res.render('index.hbs', {
-	  	userName: req.session.name
-	  	}
-	  );
-	}
-	else{
+	//TODO get all variables to send to index
+	if (req.session.username) {
+		var otherbooks, mybooks;
+		console.log("Inside");
+		Book.getOtherBooks(req.session.username, (err, books) => {
+			if (err) throw err;
+			otherbooks = JSON.stringify(books, undefined, 3);
+			console.log(otherbooks);
+
+			Books.getMyBooks(req.session.username, (err, books) => {
+				if (err) throw err;
+				mybooks = JSON.stringify(books, undefined, 3);
+
+
+
+				res.render('index.hbs', {
+					name: req.session.user.name,
+					email: req.session.user.username,
+					city: req.session.user.city,
+					state: req.session.user.state,
+					reqbooks: JSON.stringify(req.session.user.requestedBooks, undefined, 3),
+					allbooks: otherbooks
+				});
+			});
+		});
+
+	} else {
 		res.redirect('/login-register');
 	}
 });
 
-function ensureAuthenticated(req, res, next){
-	if(req.isAuthenticated()){
+function ensureAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
 		return next();
-	}
-	else{
+	} else {
 		res.redirect('/login-register');
 	}
 }

@@ -30,7 +30,7 @@
 </head>
 
 <body class="full">
-	
+
 	<!-- PRELOADER -->
 	<div class="preloader">
 		<div class="spinner">
@@ -39,11 +39,18 @@
 		</div>
 	</div>
 	<!-- end: PRELOADER  -->
-	
-	{{#if success}}
-		<div class ="alert alert-danger">{{success}}</div>
-	{{/if}}
 
+	{{#if success}}
+	<div class="alert alert-dismissible fade in">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<i class="fa fa-fw fa-check"></i> {{success}}
+	</div>
+	{{/if}} {{#if invalid}}
+	<div class="alert alert-dismissible fade in">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<i class="fa fa-fw fa-exclamation-triangle"></i> {{invalid}}
+	</div>
+	{{/if}}
 
 	<div class="global-wrap">
 		<div class="full-page">
@@ -64,32 +71,32 @@
 								</div>
 								<div class="col-md-4">
 									<h3 class="mb15">Login</h3>
-									<form method = 'post' action="/users/login">
+									<form method='post' action="/users/login">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Email id</label>
-											<input class="form-control" placeholder="e.g. you@hosting.com" type="text" name="username" />
+											<input class="form-control required" placeholder="e.g. you@hosting.com" type="text" name="username" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control" type="password" placeholder="your password" name="password" />
+											<input class="form-control required" type="password" placeholder="your password" name="password" />
 										</div>
 										<input class="btn btn-primary" name="loginButton" type="submit" value="Sign in" />
 									</form>
 								</div>
 								<div class="col-md-4">
 									<h3 class="mb15">New To iTrade?</h3>
-									<form method = 'post' action="/users/register">
+									<form method='post' action="/users/register">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Full Name</label>
-											<input class="form-control" name="name" placeholder="e.g. Bruce Wayne" type="text" />
+											<input class="form-control required" name="name" placeholder="e.g. Bruce Wayne" type="text" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-envelope input-icon input-icon-show"></i>
 											<label>Email</label>
-											<input class="form-control" name="email" placeholder="e.g. you@hosting.com" type="text" />
+											<input class="form-control required" name="email" placeholder="e.g. you@hosting.com" type="text" />
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control" name="password" type="password" placeholder="your password" />
+											<input class="form-control required" name="password" type="password" placeholder="your password" />
 										</div>
 										<input class="btn btn-primary" type="submit" name="registerSubmit" value="Sign up for Trader" />
 									</form>
