@@ -85,23 +85,8 @@ router.post('/login',
 	}),
 	function (req, res) {
 		req.session.username = req.body.username;
-
-		User.getUserByUsername(req.body.username, (err, user) => {
-			if (err) throw err;
-
-			req.session.user = user;
-
-			res.redirect('/');
-			// res.render('index.hbs', {
-			// 	userName: user.name
-			// 	});
-		});
+		res.redirect('/');
 	});
-// (req, res) => {
-// 	// req.flash('success', 'You are now logged in');
-// 	// res.redirect('/');
-// 	req.render('index.hbs');
-// });
 
 
 passport.serializeUser((user, done) => {
@@ -154,7 +139,7 @@ router.post('/upload-book', (req, res, next) => {
 	User.getUserByUsername(req.session.username, (err, user) => {
 		if (err) throw err;
 		// console.log(user.name);
-		var genre = ['all'];
+		var genre = [];
 		var bookname = req.body.bookname;
 		var ownerEmail = req.session.username;
 		req.session.name = user.name;
@@ -245,34 +230,21 @@ router.post('/upload-book', (req, res, next) => {
 		console.log(genre);
 	});
 
-
-	// console.log(user);
-	// var password = req.body.password;
-
-
-	// console.log(name, username);
-
-	// var newUser = new User({
-	// 	name: name,
-	// 	username: username,
-	// 	password: password
-	// });
-
-	// User.createUser(newUser, (err, user) => {
-	// 	if(err) throw err;
-	// 	console.log(user);
-	// });
-
-
-	// req.flash('success', 'You are now registered and can login');
-	// req.session['success'] = 'You are now registered and can login';
-	// res.location('/login-register');
-	// res.redirect('/login-register');
-
 	res.redirect('/');
-	// , {
-	// 	success: 'Book Successfully Added' 
-	// });
+});
+
+router.post('/update-profile', (req, res, next) => {
+	var name = req.body.name;
+	var city = req.body.city;
+	var state = req.body.state;
+
+	User.updateUserDetails(req.session.username, name, city, state, (err) => {
+		if (err) throw err;
+		console.log('Details Updated');
+		res.redirect('/?success=' + 'Profile Details Updated Successfully');
+	});
+
+
 });
 
 module.exports = router;

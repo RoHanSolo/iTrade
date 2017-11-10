@@ -13,27 +13,33 @@ router.get('/', function (req, res, next) {
 
 	//TODO get all variables to send to index
 	if (req.session.username) {
-		var otherbooks, mybooks;
+		var otherbooks, userbooks;
 		console.log("Inside");
 		Book.getOtherBooks(req.session.username, (err, books) => {
 			if (err) throw err;
 			otherbooks = JSON.stringify(books, undefined, 3);
 			console.log(otherbooks);
 
-			Books.getMyBooks(req.session.username, (err, books) => {
+			Book.getMyBooks(req.session.username, (err, books) => {
 				if (err) throw err;
-				mybooks = JSON.stringify(books, undefined, 3);
+				userbooks = JSON.stringify(books, undefined, 3);
 
+				User.getUserByUsername(req.session.username, (err, user) => {
+					if (err) throw err;
+					res.render('index.hbs', {
+						message: req.query.success,
+						name: user.name,
+						email: user.username,
+						city: user.city,
+						state: user.state,
+						reqbooks: JSON.stringify(user.requestedBooks, undefined, 3),
+						allbooks: otherbooks,
+						mybooks: userbooks
+					});
 
-
-				res.render('index.hbs', {
-					name: req.session.user.name,
-					email: req.session.user.username,
-					city: req.session.user.city,
-					state: req.session.user.state,
-					reqbooks: JSON.stringify(req.session.user.requestedBooks, undefined, 3),
-					allbooks: otherbooks
 				});
+
+
 			});
 		});
 
