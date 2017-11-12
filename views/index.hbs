@@ -199,17 +199,6 @@
 						<!-- portfolio-colum -->
 						<div id="requested-books" class="portfolio-colum portfolio-masonry masonry-grid-3 portfolio-padding15 portfolio-hover">
 
-							<figure class="item" data-groups='["fiction"]' id="1234">
-								<a>
-                                        <img src="https://ladygeekgirl.files.wordpress.com/2013/08/inheritance_cycle_by_manuelo108-d3cuskr.jpg" alt="">
-                                        <div>
-                                            <h5 class="name">Inheritance Cycle</h5>
-                                            <small><i class="fa fa-user tip" style="left: 0px">&nbsp;7 <span class="tiptext">No. of requests</span></i></small>
-                                            <button class="btn btn-request">Delete</button>
-                                        </div>
-                                </a>
-							</figure>
-
 						</div>
 						<!-- end: portfolio-colum -->
 
@@ -240,37 +229,9 @@
 					</header>
 
 					<div class="blog-masonry masonry-grid-3">
-						<div id="my-books" class="item-sizer"></div>
+						<div id="my-books" class="item-sizer">
 
-						<div class="item">
-							<div class="blog-box anim-shadow">
-								<div class="blog-box-img2">
-									<img src="https://i.kinja-img.com/gawker-media/image/upload/s--Jgx4HVlr--/c_scale,fl_progressive,q_80,w_800/mggdbw9nfwxdedu39deg.png" class="img-responsive" alt="">
-								</div>
-								<div class="blog-box-caption">
-									<div class="category">
-										<a href="#" rel="category tag">fiction</a>
-									</div>
-									<h5 class="title">Good Omens</h5>
-								</div>
-								<!-- .blog-box-caption -->
-								<div class="blog-box-footer">
-									<div class="row">
-										<div class="col-xs-6">
-											<span><i class="fa fa-fw fa-user" style="left: 0px"></i>No. of requests: 4</span>
-										</div>
-										<div class="col-xs-6">
-											<button class="btn btn-details">More Details</button>
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<!-- .blog-box -->
 						</div>
-						<!-- .item -->
-
-
 					</div>
 					<!-- .blog-masonry -->
 
@@ -455,7 +416,7 @@
 									</div>
 									<div class="ft-text">
 										<h6>Email ID</h6>
-										<p id="myemail">{{email}}</p>
+										<p>{{email}}</p>
 									</div>
 								</div>
 								<!-- .ft-item  -->
@@ -477,7 +438,7 @@
 									</div>
 									<div class="ft-text">
 										<h6>No. of books uploaded</h6>
-										<p>15</p>
+										<p>{{mybookcount}}</p>
 									</div>
 								</div>
 								<!-- .ft-item  -->
@@ -533,22 +494,25 @@
 	<div id="allbooks" class="hidden">{{allbooks}}</div>
 	<div id="reqbooks" class="hidden">{{reqbooks}}</div>
 	<div id="mybooks" class="hidden">{{mybooks}}</div>
+	<div id="mymail" class="hidden">{{email}}</div>
+
 
 	<!-- PLUGIN SCRIPTS -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-	<script src="/assets/js/myscript.js"></script>
-	<script src="/assets/js/bootstrap.min.js"></script>
-	<script src="/assets/js/imagesloaded.pkgd.min.js"></script>
-	<script src="/assets/js/masonry.pkgd.min.js"></script>
-	<script src="/assets/js/jquery.backstretch.min.js"></script>
-	<script src="/assets/js/jquery.stellar.min.js"></script>
-	<script src="/assets/js/owl.carousel.min.js"></script>
-	<script src="/assets/js/jquery.shuffle.min.js"></script>
-	<script src="/assets/js/jquery.hoverdir.js"></script>
-	<script src="/assets/js/jquery.lazy.min.js"></script>
-	<script src="/assets/js/functions.js"></script>
-	<script src="/assets/js/custom.js"></script>
-
+	<div id="scripts">
+		<script src="/assets/js/myscript.js"></script>
+		<script src="/assets/js/bootstrap.min.js"></script>
+		<script src="/assets/js/imagesloaded.pkgd.min.js"></script>
+		<script src="/assets/js/masonry.pkgd.min.js"></script>
+		<script src="/assets/js/jquery.backstretch.min.js"></script>
+		<script src="/assets/js/jquery.stellar.min.js"></script>
+		<script src="/assets/js/owl.carousel.min.js"></script>
+		<script src="/assets/js/jquery.shuffle.min.js"></script>
+		<script src="/assets/js/jquery.hoverdir.js"></script>
+		<script src="/assets/js/jquery.lazy.min.js"></script>
+		<script src="/assets/js/functions.js"></script>
+		<script src="/assets/js/custom.js"></script>
+	</div>
 
 </body>
 

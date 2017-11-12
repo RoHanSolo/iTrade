@@ -75,13 +75,13 @@
 									<form method='post' action="/users/login">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Email id</label>
-											<input class="form-control required" placeholder="e.g. you@hosting.com" type="text" name="username" />
+											<input class="form-control" placeholder="e.g. you@hosting.com" type="text" name="username" tabindex="1" autofocus required/>
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control required" type="password" placeholder="your password" name="password" />
+											<input class="form-control" type="password" placeholder="your password" name="password" tabindex="2" required/>
 										</div>
-										<input class="btn btn-primary" name="loginButton" type="submit" value="Sign in" />
+										<input class="btn btn-primary" name="loginButton" type="submit" value="Sign in" tabindex="3" />
 									</form>
 								</div>
 								<div class="col-md-4">
@@ -89,17 +89,17 @@
 									<form method='post' action="/users/register">
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-user input-icon input-icon-show"></i>
 											<label>Full Name</label>
-											<input class="form-control required" name="name" placeholder="e.g. Bruce Wayne" type="text" />
+											<input class="form-control" name="name" placeholder="e.g. Bruce Wayne" type="text" tabindex="4" required/>
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-envelope input-icon input-icon-show"></i>
 											<label>Email</label>
-											<input class="form-control required" name="email" placeholder="e.g. you@hosting.com" type="text" />
+											<input class="form-control" name="email" placeholder="e.g. you@hosting.com" type="text" tabindex="5" required/>
 										</div>
 										<div class="form-group form-group-ghost form-group-icon-left"><i class="fa fa-lock input-icon input-icon-show"></i>
 											<label>Password</label>
-											<input class="form-control required" name="password" type="password" placeholder="your password" />
+											<input class="form-control" name="password" type="password" placeholder="your password" tabindex="6" required/>
 										</div>
-										<input class="btn btn-primary" type="submit" name="registerSubmit" value="Sign up for Trader" />
+										<input class="btn btn-primary" type="submit" name="registerSubmit" value="Sign up for Trader" tabindex="7" />
 									</form>
 								</div>
 							</div>

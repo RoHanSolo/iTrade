@@ -1,3 +1,5 @@
+/*jshint esnext: true */
+
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
@@ -7,6 +9,11 @@ var upload = multer({
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var getFormData = require('get-form-data');
+var bodyparser = require('body-parser');
+var urlencodedparser = bodyparser.urlencoded({
+	extended: false
+});
+var async = require('async');
 
 // Importing the user model
 var User = require('../models/user');
@@ -35,26 +42,37 @@ router.post('/register', (req, res, next) => {
 
 		console.log(name, username);
 
-		var newUser = new User({
-			name: name,
-			username: username,
-			password: password
-		});
+		User.getUserByUsername(username, (err, result) => {
+			if (result === undefined) {
 
-		User.createUser(newUser, (err, user) => {
-			if (err) throw err;
-			console.log(user);
-		});
+				var newUser = new User({
+					name: name,
+					username: username,
+					password: password
+				});
+
+				User.createUser(newUser, (err, user) => {
+					if (err) throw err;
+					console.log(user);
+				});
 
 
-		// req.flash('success', 'You are now registered and can login');
-		// req.session['success'] = 'You are now registered and can login';
-		res.location('/login-register');
-		// res.redirect('/login-register');
+				// req.flash('success', 'You are now registered and can login');
+				// req.session['success'] = 'You are now registered and can login';
+				res.location('/login-register');
+				// res.redirect('/login-register');
 
-		res.render('login-register.hbs', {
-			success: 'You are now registered and can login'
-		});
+				res.render('login-register.hbs', {
+					success: 'You are now registered and can login'
+				});
+
+			} else {
+				res.location('/login-register');
+				res.render('login-register.hbs', {
+					invalid: 'Invalid registration details'
+				});
+			}
+		})
 
 	} else {
 		res.location('/login-register');
@@ -74,10 +92,6 @@ router.get('/logout', (req, res) => {
 	})
 })
 
-
-router.get('/login', (req, res, next) => {
-	res.render('index.hbs');
-});
 
 router.post('/login',
 	passport.authenticate('local', {
@@ -202,6 +216,8 @@ router.post('/upload-book', (req, res, next) => {
 
 
 		var thumbnail = req.body.thumburl;
+		if (thumbnail == null)
+			thumbnail = "/assets/img/thumb.jpg"
 
 
 		var newBook = new Book({
@@ -230,7 +246,9 @@ router.post('/upload-book', (req, res, next) => {
 		console.log(genre);
 	});
 
-	res.redirect('/');
+	res.render('/', {
+		path: '#books'
+	});
 });
 
 router.post('/update-profile', (req, res, next) => {
@@ -241,10 +259,84 @@ router.post('/update-profile', (req, res, next) => {
 	User.updateUserDetails(req.session.username, name, city, state, (err) => {
 		if (err) throw err;
 		console.log('Details Updated');
-		res.redirect('/?success=' + 'Profile Details Updated Successfully');
+		res.redirect('/');
 	});
 
+});
 
+
+router.get('/book-details', (req, res, next) => {
+	var bookId = req.query.book;
+	console.log("IN Path " + bookId);
+
+	Book.getBookById(bookId, (err, book) => {
+		if (err) throw err;
+
+		console.log(book);
+		User.getUsersByUsername(book.requestedUserEmail, (err, users) => {
+			console.log("Users: " + users);
+
+			async.map(users, (elem, callback) => {
+				console.log("In map for" + elem);
+
+				Book.getMyBooks(elem.username, (err, books) => {
+					console.log("Got book for " + elem.username);
+					console.log("User books:" + JSON.stringify(books, undefined, 3));
+					callback(null, books);
+				});
+			}, (err, result) => {
+				console.log("Result: " + result);
+
+				User.getUserByUsername(book.ownerEmail, (err, user) => {
+					console.log("User:" + user);
+
+					res.render('book-details.hbs', {
+						bookid: book._id,
+						bookname: book.bookname,
+						thumbnail: book.thumbnail,
+						genres: JSON.stringify(book.genre, undefined, 3),
+						reqnum: book.requestedUserEmail.length,
+						requsers: JSON.stringify(users, undefined, 3),
+						userbooks: JSON.stringify(result, undefined, 3),
+						name: user.name
+					});
+				});
+			});
+
+		});
+
+	});
+});
+
+
+router.post('/book-request', urlencodedparser, (req, res, next) => {
+	console.log("Request is: " + req.body.name);
+	User.addRequestId(req.session.username, req.body.name, (err) => {
+		if (err) throw err;
+		console.log('Request added to user and done');
+
+		Book.addRequestedUser(req.session.username, req.body.name, (err, result) => {
+			if (err) throw err;
+			console.log(result);
+			res.json(result);
+			//			res.redirect('/#available');
+		});
+	});
+});
+
+
+router.post('/cancel-request', urlencodedparser, (req, res, next) => {
+	console.log("Cancelled Request is: " + req.body.name);
+	User.removeBookRequest(req.session.username, req.body.name, (err) => {
+		if (err) throw err;
+		console.log('Request removed from user and done');
+
+		Book.removeUserRequest(req.body.name, req.session.username, (err, result) => {
+			if (err) throw err;
+			console.log("Result:" + result);
+			res.json(result);
+		});
+	});
 });
 
 module.exports = router;

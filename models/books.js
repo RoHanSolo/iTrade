@@ -1,3 +1,4 @@
+/*jshint esnext: true*/
 var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/bookSharing', {
@@ -10,7 +11,8 @@ var db = mongoose.connection;
 var BookSchema = mongoose.Schema({
 	bookname: {
 		type: String,
-		index: true
+		index: true,
+		trim: true
 	},
 	ownerName: {
 		type: String
@@ -23,7 +25,8 @@ var BookSchema = mongoose.Schema({
 		type: [String]
 	},
 	thumbnail: {
-		type: String
+		type: String,
+		trim: true
 	},
 	requestedUserEmail: {
 		type: [String]
@@ -33,20 +36,17 @@ var BookSchema = mongoose.Schema({
 
 var book = module.exports = mongoose.model('book', BookSchema);
 
-module.exports.getBookByName = (bookname, callback) => {
-	var query = {
-		bookname: bookname
-	};
-	book.findOne(query, callback);
+module.exports.getBookById = (bookId, callback) => {
+	book.findById(bookId, callback);
 }
 
 module.exports.getAllBooks = (callback) => {
 	book.find({}, callback);
-}
+};
 
 module.exports.addBook = function (newBook, callback) {
 	newBook.save(callback);
-}
+};
 
 module.exports.getOtherBooks = (username, callback) => {
 	book.find({
@@ -54,17 +54,48 @@ module.exports.getOtherBooks = (username, callback) => {
 			$ne: username
 		}
 	}, callback);
-}
-
+};
 
 module.exports.getMyBooks = (username, callback) => {
+	console.log("username in getmybooks:" + username);
 	book.find({
 		ownerEmail: {
 			$eq: username
 		}
 	}, callback);
-}
+};
 
-//module.export.getBooksById = (ids, callback) => {
-		//	book.find
-		//}
+module.exports.getBooksById = (ids, callback) => {
+	book.find({
+		_id: {
+			$in: ids
+		}
+	}, callback);
+};
+
+
+module.exports.addRequestedUser = (user, id, callback) => {
+	console.log(user + '-' + id);
+	book.findOneAndUpdate({
+		_id: new mongoose.Types.ObjectId(id)
+	}, {
+		$push: {
+			requestedUserEmail: user
+		}
+	}, {
+		returnOriginal: true
+	}, callback);
+};
+
+
+module.exports.removeUserRequest = (bookId, userId, callback) => {
+	book.findOneAndUpdate({
+		_id: new mongoose.Types.ObjectId(bookId)
+	}, {
+		$pull: {
+			requestedUserEmail: userId
+		}
+	}, {
+		returnOriginal: true
+	}, callback);
+};

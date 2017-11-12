@@ -18,7 +18,7 @@ var bcrypt = require('bcryptjs');
 var mongoDB = require('mongodb');
 var mongoose = require('mongoose');
 var getFormData = require('get-form-data');
-
+var async = require('async');
 var db = mongoose.connection;
 
 
@@ -89,6 +89,10 @@ app.use(function (err, req, res, next) {
 	// render the error page
 	res.status(err.status || 500);
 	res.render('error');
+});
+
+hbs.registerHelper('json', function (context) {
+	return JSON.stringify(context);
 });
 
 module.exports = app;

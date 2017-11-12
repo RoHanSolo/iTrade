@@ -11,22 +11,27 @@ var db = mongoose.connection;
 var UserSchema = mongoose.Schema({
 	username: {
 		type: String,
-		index: true
+		index: true,
+		unique: true,
+		trim: true
 	},
 	name: {
-		type: String
+		type: String,
+		trim: true
 	},
 	password: {
 		type: String
 	},
 	city: {
-		type: String
+		type: String,
+		trim: true
 	},
 	state: {
-		type: String
+		type: String,
+		trim: true
 	},
 	requestedBooks: {
-		type: [String]
+		type: [mongoose.Schema.Types.ObjectId]
 	}
 });
 
@@ -54,7 +59,7 @@ module.exports.updateUserDetails = (username, newName, newCity, newState, callba
 			state: newState
 		}
 	}, {
-		returnOriginal: false
+		returnNewDocument: true
 	}).then((result) => {
 		console.log('Update:' + result);
 		console.log("after update");
@@ -76,5 +81,33 @@ module.exports.createUser = function (newUser, callback) {
 			newUser.save(callback);
 		});
 	});
+}
 
+module.exports.addRequestId = (user, id, callback) => {
+	User.update({
+		username: user
+	}, {
+		$push: {
+			requestedBooks: id
+		}
+	}, callback);
+	console.log("After update function");
+};
+
+module.exports.removeBookRequest = (userId, bookId, callback) => {
+	User.update({
+		username: userId
+	}, {
+		$pull: {
+			requestedBooks: new mongoose.Types.ObjectId(bookId)
+		}
+	}, callback);
+}
+
+module.exports.getUsersByUsername = (ids, callback) => {
+	User.find({
+		username: {
+			$in: ids
+		}
+	}, callback);
 }

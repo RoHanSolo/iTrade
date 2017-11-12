@@ -18,23 +18,33 @@ router.get('/', function (req, res, next) {
 		Book.getOtherBooks(req.session.username, (err, books) => {
 			if (err) throw err;
 			otherbooks = JSON.stringify(books, undefined, 3);
-			console.log(otherbooks);
+			console.log("Other: " + otherbooks);
 
 			Book.getMyBooks(req.session.username, (err, books) => {
 				if (err) throw err;
 				userbooks = JSON.stringify(books, undefined, 3);
+				console.log("My: " + userbooks);
 
 				User.getUserByUsername(req.session.username, (err, user) => {
 					if (err) throw err;
-					res.render('index.hbs', {
-						message: req.query.success,
-						name: user.name,
-						email: user.username,
-						city: user.city,
-						state: user.state,
-						reqbooks: JSON.stringify(user.requestedBooks, undefined, 3),
-						allbooks: otherbooks,
-						mybooks: userbooks
+
+					Book.getBooksById(user.requestedBooks, (err, bookreqs) => {
+
+						if (err) throw err;
+						var reqbooks = JSON.stringify(bookreqs, undefined, 3);
+						console.log("Requested:" + reqbooks);
+
+						res.render('index.hbs' + req.path, {
+							message: req.query.success,
+							name: user.name,
+							email: user.username,
+							city: user.city,
+							state: user.state,
+							reqbooks: reqbooks,
+							allbooks: otherbooks,
+							mybooks: userbooks
+							mybookcount: books.length
+						});
 					});
 
 				});
