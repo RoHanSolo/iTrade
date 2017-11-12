@@ -217,7 +217,9 @@ router.post('/upload-book', (req, res, next) => {
 
 
 		var thumbnail = req.body.thumburl;
-		if (thumbnail == null)
+		var isImage = thumbnail.endsWith("jpg") || thumbnail.endsWith("jpeg") || thumbnail.endsWith("png") || thumbnail.endsWith("gif") || thumbnail.endsWith("ico") || thumbnail.endsWith("tiff") || thumbnail.endsWith("bmp");
+
+		if (thumbnail == null || !isImage)
 			thumbnail = "/assets/img/thumb.jpg"
 
 
@@ -267,6 +269,9 @@ router.post('/update-profile', (req, res, next) => {
 router.get('/book-details', (req, res, next) => {
 	var bookId = req.query.book;
 	console.log("IN Path " + bookId);
+
+	if (!req.session.username)
+		res.redirect('/');
 
 	Book.getBookById(bookId, (err, book) => {
 		if (err) throw err;
@@ -368,7 +373,7 @@ router.post('/grant-request', urlencodedparser, (req, res, next) => {
 					var granteeMailOptions = {
 						from: 'itradebooks@gmail.com',
 						to: grantee.username,
-						subject: 'Your trade request has been accepted!',
+						subject: 'iTrade - Your trade request has been accepted!',
 						text: 'Dear user, \nYour trade request for the book ' + requestedbook.bookname + ' has been accepted by ' + user.name + ' in exchange for ' + selectedbook.bookname + '. You can contact him at: ' + user.username + '.\n\nCheers,\niTrade Team'
 					};
 
@@ -383,7 +388,7 @@ router.post('/grant-request', urlencodedparser, (req, res, next) => {
 					var userMailOptions = {
 						from: 'itradebooks@gmail.com',
 						to: user.username,
-						subject: 'Your trade request has been accepted!',
+						subject: 'iTrade - You performed a successful book trade!',
 						text: 'Dear user, \nYou have accepted trade request for the book ' + requestedbook.bookname + ' from user ' + grantee.name + ' in exchange for ' + selectedbook.bookname + '. You can contact him at: ' + grantee.username + '.\n\nCheers,\niTrade Team'
 					};
 
