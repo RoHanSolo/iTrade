@@ -95,7 +95,7 @@ module.exports.addRequestId = (user, id, callback) => {
 };
 
 module.exports.removeBookRequest = (userId, bookId, callback) => {
-	User.update({
+	User.findOneAndUpdate({
 		username: userId
 	}, {
 		$pull: {

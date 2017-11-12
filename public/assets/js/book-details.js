@@ -21,12 +21,12 @@ jQuery(document).ready(function () {
 
 	var i = 0;
 	users.forEach(function (elem) {
-		var str = "<div class=\"media\" name=\"" + elem.username + "\" ><h4 style=\"color: #ff6600; text-transform: capitalize;\">" + elem.name + "</h4><h5 style=\"color: #666\">Available books:</h5>";
+		var str = "<div class=\"media\" ><h4 style=\"color: #ff6600; text-transform: capitalize;\">" + elem.name + "</h4><h5 style=\"color: #666\">Available books:</h5>";
 
 		books[i].forEach(function (book) {
 			str += "<div class=\"row\" style=\"margin: 0;\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"" + book.thumbnail + "\" /></a>";
 
-			str += "<div class=\"media-body\"><div class=\"media-heading\">" + book.bookname + "<a class=\"btn btn-default pull-right\" name=\"" + mybook + "\" id=\"" + book._id.toString() + "\" onclick=\"grantfunc(this)\" href=\"#\"><i class=\"fa fa-thumbs-up\"></i> Grant request</a></div></div></div><hr>";
+			str += "<div class=\"media-body\"><div class=\"media-heading\">" + book.bookname + "<a class=\"btn btn-default pull-right\" name=\"" + mybook + "\" id=\"" + book._id.toString() + "\" data-grantee=\"" + elem.username + "\" onclick=\"grantfunc(this)\" href=\"#\"><i class=\"fa fa-thumbs-up\"></i> Grant request</a></div></div></div><hr>";
 
 		});
 
@@ -46,5 +46,23 @@ jQuery(document).ready(function () {
 
 
 function grantfunc(elem) {
+
+	var obj = {
+		selectedbook: elem.id,
+		requestedbook: elem.name,
+		grantee: elem.getAttribute('data-grantee')
+	};
+	console.log(obj);
+	$.ajax({
+		type: 'POST',
+		data: obj,
+		url: "/users/grant-request",
+		success: reload
+	});
+
+	function reload(res) {
+		window.location = '/';
+	}
+
 
 }

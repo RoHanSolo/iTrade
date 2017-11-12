@@ -42,7 +42,7 @@ router.get('/', function (req, res, next) {
 							state: user.state,
 							reqbooks: reqbooks,
 							allbooks: otherbooks,
-							mybooks: userbooks
+							mybooks: userbooks,
 							mybookcount: books.length
 						});
 					});

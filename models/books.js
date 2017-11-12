@@ -99,3 +99,9 @@ module.exports.removeUserRequest = (bookId, userId, callback) => {
 		returnOriginal: true
 	}, callback);
 };
+
+module.exports.removeBook = (id, callback) => {
+	book.findOneAndRemove({
+		_id: mongoose.Types.ObjectId(id)
+	}, callback);
+};

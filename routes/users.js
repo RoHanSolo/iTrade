@@ -14,6 +14,7 @@ var urlencodedparser = bodyparser.urlencoded({
 	extended: false
 });
 var async = require('async');
+var nodemailer = require('nodemailer');
 
 // Importing the user model
 var User = require('../models/user');
@@ -43,7 +44,7 @@ router.post('/register', (req, res, next) => {
 		console.log(name, username);
 
 		User.getUserByUsername(username, (err, result) => {
-			if (result === undefined) {
+			if (result === null) {
 
 				var newUser = new User({
 					name: name,
@@ -246,9 +247,7 @@ router.post('/upload-book', (req, res, next) => {
 		console.log(genre);
 	});
 
-	res.render('/', {
-		path: '#books'
-	});
+	res.redirect('/');
 });
 
 router.post('/update-profile', (req, res, next) => {
@@ -336,6 +335,72 @@ router.post('/cancel-request', urlencodedparser, (req, res, next) => {
 			console.log("Result:" + result);
 			res.json(result);
 		});
+	});
+});
+
+router.post('/grant-request', urlencodedparser, (req, res, next) => {
+	console.log("Granted Request is: " + req.body.grantee);
+	User.removeBookRequest(req.body.grantee, req.body.requestedbook, (err, grantee) => {
+		if (err) throw err;
+		console.log('Request removed from user and done');
+
+		Book.removeBook(req.body.requestedbook, (err, requestedbook) => {
+			if (err) throw err;
+			console.log('Requested book removed and done');
+
+			Book.removeBook(req.body.selectedbook, (err, selectedbook) => {
+				if (err) throw err;
+				console.log("Selected book removed");
+
+				User.getUserByUsername(req.session.username, (err, user) => {
+					if (err) throw err;
+					console.log("User:" + user);
+					//SEND MAILS TO BOTH
+
+					var transporter = nodemailer.createTransport({
+						service: 'gmail',
+						auth: {
+							user: 'itradebooks@gmail.com',
+							pass: 'iTrade@IIIT'
+						}
+					});
+
+					var granteeMailOptions = {
+						from: 'itradebooks@gmail.com',
+						to: grantee.username,
+						subject: 'Your trade request has been accepted!',
+						text: 'Dear user, \nYour trade request for the book ' + requestedbook.bookname + ' has been accepted by ' + user.name + ' in exchange for ' + selectedbook.bookname + '. You can contact him at: ' + user.username + '.\n\nCheers,\niTrade Team'
+					};
+
+					transporter.sendMail(granteeMailOptions, function (error, info) {
+						if (error) {
+							console.log(error);
+						} else {
+							console.log('Email to grantee sent: ' + info.response);
+						}
+					});
+
+					var userMailOptions = {
+						from: 'itradebooks@gmail.com',
+						to: user.username,
+						subject: 'Your trade request has been accepted!',
+						text: 'Dear user, \nYou have accepted trade request for the book ' + requestedbook.bookname + ' from user ' + grantee.name + ' in exchange for ' + selectedbook.bookname + '. You can contact him at: ' + grantee.username + '.\n\nCheers,\niTrade Team'
+					};
+
+					transporter.sendMail(userMailOptions, function (error, info) {
+						if (error) {
+							console.log(error);
+						} else {
+							console.log('Email to user sent: ' + info.response);
+						}
+					});
+
+
+					res.json(user);
+				});
+			});
+		});
+
 	});
 });
 
