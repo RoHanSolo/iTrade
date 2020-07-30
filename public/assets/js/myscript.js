@@ -2,7 +2,7 @@ $(document).ready(function () {
 
 	console.log("User: " + document.getElementById("mymail").innerText);
 
-	//OTHER BOOKS LOADING
+	//AVAILABLE BOOKS LOADING
 	var books = document.getElementById("allbooks").innerText;
 	var allbooks = JSON.parse(books);
 
